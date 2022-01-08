@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UserRequest;
 use App\Models\User;
 use Functions\Response;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class AuthController extends Controller
@@ -39,15 +42,32 @@ class AuthController extends Controller
         }
     }
 
-    public function login()
+    public function login(Request $request)
     {
-        $credentials = request(['email', 'password']);
+        $credentials = $request->only('email', 'password');
 
-        if (! $token = auth()->attempt($credentials)) {
+
+        if (! $token = Auth::attempt($credentials)) {
             return Response::fail('unauthorized', 401);
         }
+        return $this->respondWithToken($token);
 
-        return Response::ok([], 'true');
+//        return Response::ok([], 'true');
+    }
+
+    protected function respondWithToken($token)
+    {
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth()->factory()->getTTL() * 60
+        ]);
+    }
+
+
+    public function me()
+    {
+        return response()->json(auth()->user());
     }
 
 

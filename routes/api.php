@@ -21,9 +21,10 @@ Route::group([
 
 ], function ($router) {
 
-    Route::post('register', 'AuthController@register');
-    Route::post('login', 'AuthController@login');
-    Route::post('logout', 'AuthController@logout');
+    Route::post('register',  [\App\Http\Controllers\AuthController::class,'register']);
+    Route::post('login',  [\App\Http\Controllers\AuthController::class,'login'])->name('login');
+    Route::post('logout', [\App\Http\Controllers\AuthController::class,'logout']);
+    Route::post('me', [\App\Http\Controllers\AuthController::class,'me']);
 });
 
 Route::group([
@@ -34,7 +35,7 @@ Route::group([
 ], function ($router) {
 
     Route::post('create', [\App\Http\Controllers\TaskController::class,'create']);
-    Route::post('update', [\App\Http\Controllers\TaskController::class,'update']);
-    Route::post('delete', [\App\Http\Controllers\TaskController::class,'delete']);
-    Route::post('show', [\App\Http\Controllers\TaskController::class,'show']);
+    Route::post('update/{task}', [\App\Http\Controllers\TaskController::class,'update']);
+    Route::post('delete/{task}', [\App\Http\Controllers\TaskController::class,'delete']);
+    Route::post('show/{task}', [\App\Http\Controllers\TaskController::class,'show']);
 });
